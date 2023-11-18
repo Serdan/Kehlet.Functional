@@ -8,6 +8,8 @@
         <Authors>Anders Kehlet</Authors>
         <Copyright>2023 Anders Kehlet</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/Serdan/Kehlet.Functional</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Serdan/Kehlet.Functional</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
