@@ -29,11 +29,6 @@ public readonly struct Result<TValue>
             ? ok(value)
             : error(this.error);
 
-    public Result<TValue> Where(Func<TValue, bool> predicate) =>
-        IsOk && predicate(value)
-            ? this
-            : error("Filtered");
-
     public Result<TResult> Select<TResult>(Func<TValue, TResult> f) =>
         IsOk
             ? ok(f(value))
