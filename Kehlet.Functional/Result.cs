@@ -29,6 +29,11 @@ public readonly struct Result<TValue>
             ? ok(value)
             : error(this.error);
 
+    public Result<TValue> Where(Func<TValue, bool> predicate) =>
+        IsOk && predicate(value)
+            ? this
+            : error("Filtered");
+
     public Result<TResult> Select<TResult>(Func<TValue, TResult> f) =>
         IsOk
             ? ok(f(value))
@@ -83,10 +88,19 @@ public readonly struct Result<TValue>
             ? value
             : f(error);
 
+    public override string ToString() =>
+        IsOk
+            ? $"ok {value}"
+            : $"error {error.Message}";
+
     public static Result<TValue> OkResult(TValue value) => new(value);
     public static Result<TValue> ErrorResult(Exception exception) => new(exception);
 
     public static implicit operator Result<TValue>(ErrorResult errorResult) => ErrorResult(errorResult.Exception);
+    public static implicit operator Result<TValue>(ResultUnion<TValue>.Ok result) => OkResult(result.Value);
+    public static implicit operator Result<TValue>(ResultUnion<TValue>.Error result) => ErrorResult(result.Exception);
+
+    public static Result<TValue> operator |(Result<TValue> a, Result<TValue> b) => a.IsOk ? a : b;
 }
 
 public readonly record struct ErrorResult(Exception Exception);

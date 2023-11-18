@@ -14,6 +14,11 @@ public readonly struct Option<TValue>(TValue value)
             ? some(value)
             : none();
 
+    public Option<TValue> Where(Func<TValue, bool> predicate) =>
+        IsSome && predicate(value)
+            ? this
+            : none;
+
     public Option<TResult> Select<TResult>(Func<TValue, TResult> selector) =>
         IsSome
             ? some(selector(value))
@@ -63,7 +68,14 @@ public readonly struct Option<TValue>(TValue value)
             ? ok(value)
             : Prelude.error(error);
 
+    public override string ToString() =>
+        IsSome
+            ? $"some {value}"
+            : "none";
+
     public static implicit operator Option<TValue>(NoneOption _) => default;
+    public static implicit operator Option<TValue>(OptionUnion<TValue>.Some option) => new(option.Value);
+    public static implicit operator Option<TValue>(OptionUnion<TValue>.None _) => default;
 }
 
 public readonly record struct NoneOption;
