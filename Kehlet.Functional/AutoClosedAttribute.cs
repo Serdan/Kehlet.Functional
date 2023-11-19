@@ -1,8 +1,6 @@
-﻿// ReSharper disable once CheckNamespace
-
-namespace ExhaustiveMatching;
+﻿namespace Kehlet.Functional;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class AutoClosedAttribute : Attribute
+public class AutoClosedAttribute(bool serializable = false) : Attribute
 {
 }

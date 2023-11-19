@@ -8,13 +8,13 @@ public static partial class Prelude
 
     public static ResultUnion<TValue> union<TValue>(Result<TValue> result) =>
         result.IsOk
-            ? ResultUnion<TValue>.Cons.Ok(result.value)
-            : ResultUnion<TValue>.Cons.Error(result.error);
+            ? ResultUnion<TValue>.Cons.NewOk(result.value)
+            : ResultUnion<TValue>.Cons.NewError(result.error);
 
     public static OptionUnion<TValue> union<TValue>(Option<TValue> result) =>
         result.IsSome
-            ? OptionUnion<TValue>.Cons.Some(result.value)
-            : OptionUnion<TValue>.Cons.None;
+            ? OptionUnion<TValue>.Cons.NewSome(result.value)
+            : OptionUnion<TValue>.Cons.NewNone;
 
     public static Result<TValue> @try<TValue>(Action f, TValue success)
     {
