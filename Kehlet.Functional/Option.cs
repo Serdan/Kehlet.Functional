@@ -76,6 +76,7 @@ public readonly struct Option<TValue>(TValue value)
     public static implicit operator Option<TValue>(NoneOption _) => default;
     public static implicit operator Option<TValue>(OptionUnion<TValue>.Some option) => new(option.Value);
     public static implicit operator Option<TValue>(OptionUnion<TValue>.None _) => default;
+    public static Option<TValue> operator |(Option<TValue> lhs, Option<TValue> rhs) => lhs.IsSome ? lhs : rhs;
 }
 
 public readonly record struct NoneOption;
