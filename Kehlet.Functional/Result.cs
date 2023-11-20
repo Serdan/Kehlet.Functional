@@ -100,7 +100,7 @@ public readonly struct Result<TValue>
     public static implicit operator Result<TValue>(ResultUnion<TValue>.Ok result) => OkResult(result.Value);
     public static implicit operator Result<TValue>(ResultUnion<TValue>.Error result) => ErrorResult(result.Exception);
 
-    public static Result<TValue> operator |(Result<TValue> a, Result<TValue> b) => a.IsOk ? a : b;
+    public static Result<TValue> operator |(Result<TValue> lhs, Result<TValue> rhs) => lhs.IsOk ? lhs : rhs;
 }
 
 public readonly record struct ErrorResult(Exception Exception);
