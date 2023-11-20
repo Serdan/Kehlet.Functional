@@ -52,4 +52,8 @@ public static partial class Prelude
             return error(e);
         }
     }
+
+    public static TValue1 fst<TValue1, TValue2>((TValue1 value1, TValue2 _) tuple) => tuple.value1;
+
+    public static TValue2 snd<TValue1, TValue2>((TValue1 _, TValue2 value2) tuple) => tuple.value2;
 }
