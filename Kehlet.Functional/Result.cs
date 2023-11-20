@@ -83,6 +83,11 @@ public readonly struct Result<TValue>
             ? value
             : f(error);
 
+    public Result<TValue> SelectError(Func<Exception, Exception> f) =>
+        IsOk
+            ? this
+            : error(f(error));
+
     public override string ToString() =>
         IsOk
             ? $"ok {value}"
@@ -104,6 +109,9 @@ public static partial class Prelude
 {
     public static Result<TValue> ok<TValue>(TValue value) =>
         Result<TValue>.OkResult(value);
+
+    public static Result<(TValue1, TValue2)> ok<TValue1, TValue2>(TValue1 value1, TValue2 value2) =>
+        Result<(TValue1, TValue2)>.OkResult((value1, value2));
 
     public static ErrorResult error(Exception exception) =>
         new(exception);

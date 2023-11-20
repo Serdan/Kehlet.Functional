@@ -85,6 +85,9 @@ public static partial class Prelude
     public static Option<TValue> some<TValue>(TValue value) =>
         new(value);
 
+    public static Option<(TValue1, TValue2)> some<TValue1, TValue2>(TValue1 value1, TValue2 value2) =>
+        new((value1, value2));
+
     public static NoneOption none =>
         default;
 
