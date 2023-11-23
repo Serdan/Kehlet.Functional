@@ -6,8 +6,8 @@
 ## Project Structure
 
 - **Extensions**: Contains extension methods to augment existing classes or types.
-- **AutoClosedAttribute.cs**: Defines an attribute for automatic resource management or closures.
-- **globals.cs**: Contains global variables or settings for the project.
+- **AutoClosedAttribute.cs**: Defines an attribute for transforming class hierarchies into discriminated unions.
+- **globals.cs**: Contains global using directives for the project.
 - **Kehlet.Functional.csproj**: The central project file for build and configuration management.
 - **Option.cs**: Implements the 'Option' type, representing values that may or may not exist.
 - **OptionUnion.cs**: Defines unions for different states of an 'Option' type.
@@ -16,5 +16,4 @@
 - **ResultUnion.cs**: Defines unions for different outcomes of the 'Result' type.
 - **Unit.cs**: Defines the 'Unit' type, representing a semantic-less value in functional programming.
 
-## Functional Programming in C#
 This project demonstrates the integration of functional programming concepts within a C# environment, providing a foundation for developers to build upon these concepts in their applications.
