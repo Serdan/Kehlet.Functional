@@ -145,19 +145,7 @@ public readonly struct Result<TValue>
     /// </summary>
     /// <param name="f">A transformation function to apply to the error.</param>
     /// <returns>A new result object with the transformed error if the original result is not successful, otherwise the original result.</returns>
-    public Result<TValue> SelectError(Func<Exception, Exception> f)
-
-    /// <summary>
-    /// Transforms the error of the result using a specified function if the result is not successful, otherwise returns the original result.
-    /// </summary>
-    /// <typeparam name="TResult">The type of the result returned by the alternative function.</typeparam>
-    /// <param name="alternativeFactory">A function to apply when the result is an error, returning a new result object.</param>
-    /// <returns>A new result object if the original result is an error; otherwise, the original result.</returns>
-    public Result<TResult> OrElse<TResult>(Func<Exception, Result<TResult>> alternativeFactory)
-    {
-        return IsError ? alternativeFactory(error) : this;
-    }
- =>
+    public Result<TValue> SelectError(Func<Exception, Exception> f) =>
         IsOk
             ? this
             : error(f(error));
