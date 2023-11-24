@@ -141,6 +141,16 @@ public readonly struct Result<TValue>
             : f(error);
 
     /// <summary>
+    /// Returns the original result if it is successful, or applies a specified function to the error if it's not, returning a new result object.
+    /// </summary>
+    /// <param name="f">A function to apply to the error when the result is not successful, returning a new result object.</param>
+    /// <returns>The original result if it is successful; otherwise, the new result object.</returns>
+    public Result<TValue> OrElse(Func<Exception, Result<TValue>> f) =>
+        IsOk
+            ? this
+            : f(error);
+
+    /// <summary>
     /// Transforms the error of the result using a specified function if the result is not successful.
     /// </summary>
     /// <param name="f">A transformation function to apply to the error.</param>
