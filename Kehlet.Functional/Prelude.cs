@@ -6,17 +6,20 @@ public static partial class Prelude
 {
     public static Unit unit { get; } = new();
 
-    public static ResultUnion<TValue> union<TValue>(Result<TValue> result) =>
+    public static ResultUnion<TValue> union<TValue>(Result<TValue> result)
+        where TValue : notnull =>
         result.IsOk
             ? ResultUnion<TValue>.Cons.NewOk(result.value)
             : ResultUnion<TValue>.Cons.NewError(result.error);
 
-    public static OptionUnion<TValue> union<TValue>(Option<TValue> result) =>
+    public static OptionUnion<TValue> union<TValue>(Option<TValue> result)
+        where TValue : notnull =>
         result.IsSome
             ? OptionUnion<TValue>.Cons.NewSome(result.value)
             : OptionUnion<TValue>.Cons.NewNone;
 
     public static Result<TValue> @try<TValue>(Action f, TValue success)
+        where TValue : notnull
     {
         try
         {
@@ -30,6 +33,7 @@ public static partial class Prelude
     }
 
     public static Result<TValue> @try<TValue>(Func<TValue> f)
+        where TValue : notnull
     {
         try
         {
@@ -42,6 +46,7 @@ public static partial class Prelude
     }
 
     public static Result<TValue> @try<TValue>(Func<Result<TValue>> f)
+        where TValue : notnull
     {
         try
         {
