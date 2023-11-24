@@ -1,12 +1,15 @@
 // ReSharper disable InconsistentNaming
 
+using System.Runtime.CompilerServices;
+
 namespace Kehlet.Functional;
 
 /// <summary>
 /// Represents the outcome of a computation that can either succeed with a value or fail with an exception.
 /// </summary>
 /// <typeparam name="TValue">The type of the value returned in case of success.</typeparam>
-public readonly struct Result<TValue>
+public readonly struct Result<TValue> : IEquatable<Result<TValue>>
+    where TValue : notnull
 {
     internal readonly TValue value;
     internal readonly Exception error;
@@ -47,13 +50,51 @@ public readonly struct Result<TValue>
             ? ok(value)
             : error(this.error);
 
+    public Result<TValue> Where(Func<TValue, bool> f, [CallerArgumentExpression(nameof(f))] string expr = "") =>
+        IsOk && !f(value)
+            ? error(expr)
+            : this;
+
+    public Result<TValue> Where(Func<TValue, (bool, string)> f)
+    {
+        if (IsOk is false)
+        {
+            return this;
+        }
+
+        var (pred, err) = f(value);
+        if (pred)
+        {
+            return this;
+        }
+
+        return error(err);
+    }
+
+    public Result<TValue> Where(Func<TValue, (bool, Exception)> f)
+    {
+        if (IsOk is false)
+        {
+            return this;
+        }
+
+        var (pred, err) = f(value);
+        if (pred)
+        {
+            return this;
+        }
+
+        return error(err);
+    }
+
     /// <summary>
     /// Transforms the value of the result using a specified function if the result is successful.
     /// </summary>
     /// <typeparam name="TResult">The type of the result after applying the transformation function.</typeparam>
     /// <param name="f">A transformation function to apply to the value.</param>
     /// <returns>A new result object with the transformed value if the original result is successful, otherwise an error result.</returns>
-    public Result<TResult> Select<TResult>(Func<TValue, TResult> f) =>
+    public Result<TResult> Select<TResult>(Func<TValue, TResult> f)
+        where TResult : notnull =>
         IsOk
             ? ok(f(value))
             : error(error);
@@ -64,7 +105,8 @@ public readonly struct Result<TValue>
     /// <typeparam name="TResult">The type of the result returned by the transformation function.</typeparam>
     /// <param name="f">A transformation function to apply to the value that returns a result object.</param>
     /// <returns>A new result object from the transformation function if the original result is successful, otherwise an error result.</returns>
-    public Result<TResult> Select<TResult>(Func<TValue, Result<TResult>> f) =>
+    public Result<TResult> Select<TResult>(Func<TValue, Result<TResult>> f)
+        where TResult : notnull =>
         IsOk
             ? f(value)
             : error(error);
@@ -75,7 +117,8 @@ public readonly struct Result<TValue>
     /// <typeparam name="TResult">The type of the result after applying the transformation function.</typeparam>
     /// <param name="f">An asynchronous transformation function to apply to the value.</param>
     /// <returns>A task representing the asynchronous operation, containing a new result object with the transformed value if the original result is successful, otherwise an error result.</returns>
-    public async Task<Result<TResult>> Select<TResult>(Func<TValue, Task<TResult>> f) =>
+    public async Task<Result<TResult>> Select<TResult>(Func<TValue, Task<TResult>> f)
+        where TResult : notnull =>
         IsOk
             ? ok(await f(value))
             : error(error);
@@ -89,6 +132,8 @@ public readonly struct Result<TValue>
     /// <param name="resultSelector">A function to transform the intermediate result to the final result.</param>
     /// <returns>A new result object representing the transformed value.</returns>
     public Result<TResult> SelectMany<TValue2, TResult>(Func<TValue, Result<TValue2>> selector, Func<TValue, TValue2, TResult> resultSelector)
+        where TResult : notnull
+        where TValue2 : notnull
     {
         if (IsError)
         {
@@ -114,6 +159,8 @@ public readonly struct Result<TValue>
     /// <param name="resultSelector">A function to transform the intermediate result to a final result object.</param>
     /// <returns>A new result object representing the final transformed value.</returns>
     public Result<TResult> SelectMany<TValue2, TResult>(Func<TValue, Result<TValue2>> selector, Func<TValue, TValue2, Result<TResult>> resultSelector)
+        where TResult : notnull
+        where TValue2 : notnull
     {
         if (IsError)
         {
@@ -145,7 +192,7 @@ public readonly struct Result<TValue>
     /// </summary>
     /// <param name="f">A function to apply to the error when the result is not successful, returning a new result object.</param>
     /// <returns>The original result if it is successful; otherwise, the new result object.</returns>
-    public Result<TValue> OrElse(Func<Exception, Result<TValue>> f) =>
+    public Result<TValue> SelectError(Func<Exception, Result<TValue>> f) =>
         IsOk
             ? this
             : f(error);
@@ -166,8 +213,8 @@ public readonly struct Result<TValue>
     /// <returns>A string representation of the result.</returns>
     public override string ToString() =>
         IsOk
-            ? $"ok {value}"
-            : $"error {error.Message}";
+            ? $"Ok({value})"
+            : $"Error({error.Message})";
 
     /// <summary>
     /// Creates a successful result object with the provided value.
@@ -205,20 +252,53 @@ public readonly struct Result<TValue>
     /// <returns>A Result object representing the error.</returns>
     public static implicit operator Result<TValue>(ResultUnion<TValue>.Error result) => ErrorResult(result.Exception);
 
+    public bool Equals(Result<TValue> other) =>
+        this == other;
+
+    public override bool Equals(object? obj) =>
+        obj is Result<TValue> other && Equals(other);
+
+    public override int GetHashCode() =>
+        IsOk
+            ? EqualityComparer<TValue>.Default.GetHashCode(value)
+            : EqualityComparer<Exception>.Default.GetHashCode(error);
+
     /// <summary>
     /// Defines a custom operator | to select the first successful result between two results.
     /// </summary>
     /// <param name="lhs">The first result to evaluate.</param>
     /// <param name="rhs">The second result to evaluate.</param>
     /// <returns>The first successful result if either is successful, otherwise the second result.</returns>
-    public static Result<TValue> operator |(Result<TValue> lhs, Result<TValue> rhs) => lhs.IsOk ? lhs : rhs;
+    public static Result<TValue> operator |(Result<TValue> lhs, Result<TValue> rhs) =>
+        lhs.IsOk
+            ? lhs
+            : rhs;
+
+    public static bool operator true(Result<TValue> result) => result.IsOk;
+
+    public static bool operator false(Result<TValue> result) => !result.IsOk;
+
+    public static bool operator ==(Result<TValue> lhs, Result<TValue> rhs) =>
+        (lhs.IsOk, rhs.IsOk) switch
+        {
+            (true, true) => EqualityComparer<TValue>.Default.Equals(rhs.value, lhs.value),
+            (false, false) => EqualityComparer<Exception>.Default.Equals(lhs.error, rhs.error),
+            _ => false
+        };
+
+    public static bool operator !=(Result<TValue> lhs, Result<TValue> rhs) => !(lhs == rhs);
 }
 
-public readonly record struct ErrorResult(Exception Exception);
+public readonly record struct ErrorResult(Exception Exception)
+{
+    public Result<TValue> ToResult<TValue>()
+        where TValue : notnull => this;
+}
 
 public static partial class Prelude
 {
-    public static Result<TValue> ok<TValue>(TValue value) =>
+    public static Result<TValue> ok<TValue>(TValue value)
+        where TValue : notnull =>
         Result<TValue>.OkResult(value);
 
     public static Result<(TValue1, TValue2)> ok<TValue1, TValue2>(TValue1 value1, TValue2 value2) =>
@@ -230,7 +310,8 @@ public static partial class Prelude
     public static ErrorResult error(string message) =>
         new(new(message));
 
-    public static IEnumerable<TValue> filter<TValue>(IEnumerable<Result<TValue>> values) =>
+    public static IEnumerable<TValue> filter<TValue>(IEnumerable<Result<TValue>> values)
+        where TValue : notnull =>
         from value in values
         where value.IsOk
         select value.value;
