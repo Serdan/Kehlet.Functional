@@ -310,6 +310,14 @@ public static partial class Prelude
     public static ErrorResult error(string message) =>
         new(new(message));
 
+    public static Result<TValue> error<TValue>(string message)
+        where TValue : notnull =>
+        Result<TValue>.ErrorResult(new(message));
+
+    public static Result<TValue> error<TValue>(Exception exception)
+        where TValue : notnull =>
+        Result<TValue>.ErrorResult(exception);
+
     public static IEnumerable<TValue> filter<TValue>(IEnumerable<Result<TValue>> values)
         where TValue : notnull =>
         from value in values
