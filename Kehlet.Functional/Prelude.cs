@@ -61,4 +61,11 @@ public static partial class Prelude
     public static TValue1 fst<TValue1, TValue2>((TValue1 value1, TValue2 _) tuple) => tuple.value1;
 
     public static TValue2 snd<TValue1, TValue2>((TValue1 _, TValue2 value2) tuple) => tuple.value2;
+
+    public static Func<T1, T3> compose<T1, T2, T3>(Func<T1, T2> lhs, Func<T2, T3> rhs) => x => rhs(lhs(x));
+
+    public static Func<T1, T4> compose<T1, T2, T3, T4>(Func<T1, T2> first, Func<T2, T3> second, Func<T3, T4> third) => x => third(second(first(x)));
+
+    public static Fold<TAccumulate> fold<TAccumulate>(TAccumulate initialValue) =>
+        new(initialValue);
 }
