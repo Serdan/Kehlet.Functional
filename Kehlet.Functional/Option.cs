@@ -33,7 +33,7 @@ public readonly struct Option<TValue>(TValue value) : IEquatable<Option<TValue>>
             : none;
 
     public Option<TResult> SelectMany<TValue2, TResult>(Func<TValue, Option<TValue2>> selector, Func<TValue, TValue2, TResult> resultSelector)
-        where TResult : notnull 
+        where TResult : notnull
         where TValue2 : notnull
     {
         if (IsNone)
@@ -52,7 +52,7 @@ public readonly struct Option<TValue>(TValue value) : IEquatable<Option<TValue>>
     }
 
     public Option<TResult> SelectMany<TValue2, TResult>(Func<TValue, Option<TValue2>> selector, Func<TValue, TValue2, Option<TResult>> resultSelector)
-        where TResult : notnull 
+        where TResult : notnull
         where TValue2 : notnull
     {
         if (IsNone)
@@ -81,7 +81,9 @@ public readonly struct Option<TValue>(TValue value) : IEquatable<Option<TValue>>
             : "None";
 
     public static implicit operator Option<TValue>(NoneOption _) => default;
+
     public static implicit operator Option<TValue>(OptionUnion<TValue>.Some option) => new(option.Value);
+
     public static implicit operator Option<TValue>(OptionUnion<TValue>.None _) => default;
 
     public bool Equals(Option<TValue> other) =>

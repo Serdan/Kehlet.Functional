@@ -1,6 +1,4 @@
-﻿using ExhaustiveMatching;
-
-namespace Kehlet.Functional;
+﻿namespace Kehlet.Functional;
 
 [AutoClosed]
 public partial record ResultUnion<TValue>
