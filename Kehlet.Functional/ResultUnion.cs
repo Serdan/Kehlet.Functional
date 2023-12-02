@@ -1,6 +1,6 @@
 ﻿namespace Kehlet.Functional;
 
-[AutoClosed]
+[Union]
 public partial record ResultUnion<TValue>
 {
     partial record Ok(TValue Value);

@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kehlet.Functional", "Kehlet.Functional\Kehlet.Functional.csproj", "{CBA77F55-51C2-4F0D-B1C2-A4BC40EE110D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kehlet.Functional.Tests", "Kehlet.Functional.Tests\Kehlet.Functional.Tests.csproj", "{7985D873-5C2F-48D3-ADF3-183ED7DF7D2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{CBA77F55-51C2-4F0D-B1C2-A4BC40EE110D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBA77F55-51C2-4F0D-B1C2-A4BC40EE110D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBA77F55-51C2-4F0D-B1C2-A4BC40EE110D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7985D873-5C2F-48D3-ADF3-183ED7DF7D2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7985D873-5C2F-48D3-ADF3-183ED7DF7D2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7985D873-5C2F-48D3-ADF3-183ED7DF7D2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7985D873-5C2F-48D3-ADF3-183ED7DF7D2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

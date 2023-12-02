@@ -3,17 +3,73 @@
 ## Overview
 `Kehlet.Functional` is a C# project focused on implementing functional programming constructs. This project provides a range of functionalities that are essential for functional programming paradigms in C#.
 
-## Project Structure
+## Examples
 
-- **Extensions**: Contains extension methods to augment existing classes or types.
-- **AutoClosedAttribute.cs**: Defines an attribute for transforming class hierarchies into discriminated unions.
-- **globals.cs**: Contains global using directives for the project.
-- **Kehlet.Functional.csproj**: The central project file for build and configuration management.
-- **Option.cs**: Implements the 'Option' type, representing values that may or may not exist.
-- **OptionUnion.cs**: Defines unions for different states of an 'Option' type.
-- **Prelude.cs**: Fundamental functions and types for universal applicability across the project.
-- **Result.cs**: Implements the 'Result' type, encapsulating computation outcomes as success or error.
-- **ResultUnion.cs**: Defines unions for different outcomes of the 'Result' type.
-- **Unit.cs**: Defines the 'Unit' type, representing a semantic-less value in functional programming.
+### Monads
+```csharp
+using static Kehlet.Functional.Prelude;
 
-This project demonstrates the integration of functional programming concepts within a C# environment, providing a foundation for developers to build upon these concepts in their applications.
+var number1 = ok(42);
+var number2 = ok(69);
+ 
+Result<int> result1 = from a in number1
+                      from b in number2
+                      select a + b;
+
+Result<int> result2 = from a in number1
+                      from b in number2
+                      let sum = a + b
+                      select sum > 50
+                          ? ok(sum)
+                          : error("Number is too low");
+```
+
+```csharp
+public Result<string> WriteFile(string projectName, string filePath, string content, FileWriteMode mode) =>
+    from project in ParseProjectName(projectName)
+    from file in ParseFilePath(project, filePath)
+    let message = file.Exists ? "existing file" : "new file"
+    select mode switch
+    {
+        FileWriteMode.Append => from result in fileSystem.AppendAllText(file.FullName, content) select $"Appended content to {message}: {file.Name}",
+        FileWriteMode.Write => from result in fileSystem.WriteAllText(file.FullName, content) select $"Wrote content to {message}: {file.Name}",
+        _ => error($"Unsupported mode: {mode}")
+    };
+```
+
+### Unions
+```csharp
+[Union]
+public partial record TokenKind
+{
+    partial record Identifier(string Value);
+    partial record Plus;
+    partial record Minus;
+}
+
+var token = TokenKind.Cons.Plus;
+
+var result = token switch {
+    TokenKind.Identifier(var value) => $"Identifier: {value}",
+    TokenKind.Plus => "plus",
+    TokenKind.Minus => "minus",
+    _ => UnreachableException()
+}
+```
+
+```csharp
+var option = some(42);
+var result = union(option) switch
+{
+    OptionUnion<int>.Some(var value) => value,
+    OptionUnion<int>.None => 69,
+    _ => UnreachableException()
+};
+```
+
+### Other stuff
+```csharp
+int factorial = from acc in fold(1)
+                from value in (int[]) [1, 2, 3, 4, 5]
+                select acc * value
+```
