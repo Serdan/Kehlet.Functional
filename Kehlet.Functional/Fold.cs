@@ -1,6 +1,6 @@
 namespace Kehlet.Functional;
 
-public class Fold<TAccumulate>(TAccumulate initialValue)
+public readonly struct Fold<TAccumulate>(TAccumulate initialValue)
 {
     private readonly Func<TAccumulate, bool>? predicate;
 

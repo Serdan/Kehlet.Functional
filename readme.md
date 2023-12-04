@@ -37,36 +37,6 @@ public Result<string> WriteFile(string projectName, string filePath, string cont
     };
 ```
 
-### Unions
-```csharp
-[Union]
-public partial record TokenKind
-{
-    partial record Identifier(string Value);
-    partial record Plus;
-    partial record Minus;
-}
-
-var token = TokenKind.Cons.Plus;
-
-var result = token switch {
-    TokenKind.Identifier(var value) => $"Identifier: {value}",
-    TokenKind.Plus => "plus",
-    TokenKind.Minus => "minus",
-    _ => UnreachableException()
-}
-```
-
-```csharp
-var option = some(42);
-var result = union(option) switch
-{
-    OptionUnion<int>.Some(var value) => value,
-    OptionUnion<int>.None => 69,
-    _ => UnreachableException()
-};
-```
-
 ### Other stuff
 ```csharp
 int factorial = from acc in fold(1)

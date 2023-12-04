@@ -25,37 +25,19 @@ public partial record OptionUnion<TValue>
             _ => throw new UnreachableException()
         };
 
-    public OptionUnion<TResult> SelectMany<TValue2, TResult>(Func<TValue, OptionUnion<TValue2>> bind, Func<TValue, TValue2, TResult> map)
-    {
-        if (this is not Some(var value))
+    public OptionUnion<TResult> SelectMany<TValue2, TResult>(Func<TValue, OptionUnion<TValue2>> bind, Func<TValue, TValue2, TResult> map) =>
+        this switch
         {
-            return OptionUnion<TResult>.Cons.NewNone;
-        }
+            Some(var value) => from value2 in bind(value) select map(value, value2),
+            None => OptionUnion<TResult>.Cons.NewNone,
+            _ => throw new UnreachableException()
+        };
 
-        var option2 = bind(value);
-
-        if (option2 is not OptionUnion<TValue2>.Some(var value2))
+    public OptionUnion<TResult> SelectMany<TValue2, TResult>(Func<TValue, OptionUnion<TValue2>> bind, Func<TValue, TValue2, OptionUnion<TResult>> map) =>
+        this switch
         {
-            return OptionUnion<TResult>.Cons.NewNone;
-        }
-
-        return OptionUnion<TResult>.Cons.NewSome(map(value, value2));
-    }
-
-    public OptionUnion<TResult> SelectMany<TValue2, TResult>(Func<TValue, OptionUnion<TValue2>> bind, Func<TValue, TValue2, OptionUnion<TResult>> map)
-    {
-        if (this is not Some(var value))
-        {
-            return OptionUnion<TResult>.Cons.NewNone;
-        }
-
-        var option2 = bind(value);
-
-        if (option2 is not OptionUnion<TValue2>.Some(var value2))
-        {
-            return OptionUnion<TResult>.Cons.NewNone;
-        }
-
-        return map(value, value2);
-    }
+            Some(var value) => from value2 in bind(value) select map(value, value2),
+            None => OptionUnion<TResult>.Cons.NewNone,
+            _ => throw new UnreachableException()
+        };
 }

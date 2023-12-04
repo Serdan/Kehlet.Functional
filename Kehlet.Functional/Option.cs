@@ -1,5 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming
 
+using System.Collections.Immutable;
+
 namespace Kehlet.Functional;
 
 public readonly struct Option<TValue>(TValue value) : IEquatable<Option<TValue>>
@@ -97,7 +99,21 @@ public readonly struct Option<TValue>(TValue value) : IEquatable<Option<TValue>>
             ? EqualityComparer<TValue>.Default.GetHashCode(value)
             : 0;
 
-    public static Option<TValue> operator |(Option<TValue> lhs, Option<TValue> rhs) => lhs.IsSome ? lhs : rhs;
+    public static Option<TValue> operator |(Option<TValue> lhs, Option<TValue> rhs) =>
+        lhs.IsSome
+            ? lhs
+            : rhs;
+
+    public static Option<IReadOnlyList<TValue>> operator &(Option<TValue> lhs, Option<TValue> rhs) =>
+        lhs.IsSome && rhs.IsSome
+            ? some((IReadOnlyList<TValue>) ImmutableArray.Create([lhs.value, rhs.value]))
+            : none;
+
+    public static Option<IReadOnlyList<TValue>> operator &(Option<IReadOnlyList<TValue>> lhs, Option<TValue> rhs) =>
+        lhs.IsSome && rhs.IsSome
+            ? some((IReadOnlyList<TValue>) lhs.value.Append(rhs.value).ToImmutableArray())
+            : none;
+
     public static bool operator true(Option<TValue> option) => option.IsSome;
     public static bool operator false(Option<TValue> option) => !option.IsSome;
 
@@ -112,7 +128,11 @@ public readonly struct Option<TValue>(TValue value) : IEquatable<Option<TValue>>
     public static bool operator !=(Option<TValue> lhs, Option<TValue> rhs) => !(lhs == rhs);
 }
 
-public readonly record struct NoneOption;
+public readonly record struct NoneOption
+{
+    public Option<TValue> ToOption<TValue>()
+        where TValue : notnull => none;
+}
 
 public static partial class Prelude
 {
