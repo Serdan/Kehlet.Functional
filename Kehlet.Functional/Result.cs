@@ -297,6 +297,8 @@ public readonly record struct ErrorResult(Exception Exception)
 
 public static partial class Prelude
 {
+    public static Result<Unit> ok() => Result<Unit>.OkResult(unit);
+    
     public static Result<TValue> ok<TValue>(TValue value)
         where TValue : notnull =>
         Result<TValue>.OkResult(value);
