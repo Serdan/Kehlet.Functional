@@ -11,6 +11,7 @@
         <PackageProjectUrl>https://github.com/Serdan/Kehlet.Functional</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Serdan/Kehlet.Functional</RepositoryUrl>
         <Version>1.0.6</Version>
+        <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -18,4 +19,7 @@
       <PackageReference Include="Kehlet.Functional.Generators.UnionGenerator" Version="1.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Include="..\readme.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 </Project>
