@@ -1,3 +1,5 @@
+using System.Diagnostics.Contracts;
+
 namespace Kehlet.Functional;
 
 public readonly struct Fold<TAccumulate>(TAccumulate initialValue)
@@ -7,9 +9,11 @@ public readonly struct Fold<TAccumulate>(TAccumulate initialValue)
     private Fold(TAccumulate initialValue, Func<TAccumulate, bool> predicate) : this(initialValue) => 
         this.predicate = predicate;
 
+    [Pure]
     public Fold<TAccumulate> Where(Func<TAccumulate, bool> predicate) => 
         new(initialValue, predicate);
 
+    [Pure]
     public TAccumulate SelectMany<TValue>(Func<TAccumulate, IEnumerable<TValue>> selector, Func<TAccumulate, TValue, TAccumulate> accumulator)
     {
         var values = selector(initialValue);

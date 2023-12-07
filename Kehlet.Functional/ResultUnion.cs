@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.Contracts;
 
 namespace Kehlet.Functional;
 
@@ -9,6 +10,7 @@ public partial record ResultUnion<TValue>
 
     partial record Error(Exception Exception);
 
+    [Pure]
     public ResultUnion<TResult> Select<TResult>(Func<TValue, TResult> selector) =>
         this switch
         {
@@ -17,6 +19,7 @@ public partial record ResultUnion<TValue>
             _ => throw new UnreachableException()
         };
 
+    [Pure]
     public ResultUnion<TResult> Select<TResult>(Func<TValue, ResultUnion<TResult>> selector) =>
         this switch
         {
@@ -25,6 +28,7 @@ public partial record ResultUnion<TValue>
             _ => throw new UnreachableException()
         };
 
+    [Pure]
     public ResultUnion<TResult> SelectMany<TValue2, TResult>(Func<TValue, ResultUnion<TValue2>> bind, Func<TValue, TValue2, TResult> map) =>
         this switch
         {
@@ -33,6 +37,7 @@ public partial record ResultUnion<TValue>
             _ => throw new UnreachableException()
         };
 
+    [Pure]
     public ResultUnion<TResult> SelectMany<TValue2, TResult>(Func<TValue, ResultUnion<TValue2>> bind, Func<TValue, TValue2, ResultUnion<TResult>> map) =>
         this switch
         {

@@ -1,36 +1,80 @@
-﻿namespace Kehlet.Functional.Extensions;
+﻿using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
+
+namespace Kehlet.Functional.Extensions;
 
 public static class TaskExtensions
 {
-    public static async Task<TResult> Select<TValue, TResult>(this Task<TValue> self, Func<TValue, TResult> f) =>
-        f(await self);
+    [Pure]
+    public static async Task<TValue> Where<TValue>(this Task<TValue> self, Func<TValue, bool> predicate, [CallerArgumentExpression(nameof(predicate))] string expr = "")
+    {
+        var value = await self.NoSync();
+        if (predicate(value))
+        {
+            return value;
+        }
+        else
+        {
+            throw new TaskCanceledException(expr);
+        }
+    }
 
-    public static async Task<TResult> Select<TValue, TResult>(this Task<TValue> self, Func<TValue, Task<TResult>> f) =>
-        await f(await self);
+    [Pure]
+    public static async Task<TValue> Where<TValue>(this Task<TValue> self, Func<TValue, Task<bool>> predicate, [CallerArgumentExpression(nameof(predicate))] string expr = "")
+    {
+        var value = await self.NoSync();
+        if (await predicate(value).NoSync())
+        {
+            return value;
+        }
+        else
+        {
+            throw new TaskCanceledException(expr);
+        }
+    }
 
+    [Pure]
+    public static async Task<TResult> Select<TValue, TResult>(this Task<TValue> self, Func<TValue, TResult> selector) =>
+        selector(await self.NoSync());
+
+    [Pure]
+    public static async Task<TResult> Select<TValue, TResult>(this Task<TValue> self, Func<TValue, Task<TResult>> selector) =>
+        await selector(await self.NoSync()).NoSync();
+
+    [Pure]
     public static async Task<TResult> SelectMany<TValue, TTask, TResult>(
         this Task<TValue> self,
         Func<TValue, Task<TTask>> selector,
         Func<TValue, TTask, TResult> resultSelector)
     {
-        var value = await self;
-        var value2 = await selector(value);
+        var value = await self.NoSync();
+        var value2 = await selector(value).NoSync();
         return resultSelector(value, value2);
     }
-    
+
+    [Pure]
     public static async Task<TResult> SelectMany<TValue, TTask, TResult>(
         this Task<TValue> self,
         Func<TValue, Task<TTask>> selector,
         Func<TValue, TTask, Task<TResult>> resultSelector)
     {
-        var value = await self;
-        var value2 = await selector(value);
-        return await resultSelector(value, value2);
+        var value = await self.NoSync();
+        var value2 = await selector(value).NoSync();
+        return await resultSelector(value, value2).NoSync();
     }
 
+    [Pure]
     public static async Task<Unit> ToUnit(this Task task)
     {
-        await task;
+        await task.NoSync();
         return unit;
     }
+
+    [Pure]
+    internal static ConfiguredTaskAwaitable<TValue> NoSync<TValue>(this Task<TValue> self) =>
+        self.ConfigureAwait(false);
+
+    [Pure]
+    internal static ConfiguredTaskAwaitable NoSync(this Task self) =>
+        self.ConfigureAwait(false);
 }

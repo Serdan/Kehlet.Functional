@@ -1,5 +1,6 @@
 // ReSharper disable InconsistentNaming
 
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace Kehlet.Functional;
@@ -45,24 +46,27 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>
     /// <param name="ok">A function to apply when the result is successful.</param>
     /// <param name="error">A function to apply when the result is an error.</param>
     /// <returns>The result of applying the selected function.</returns>
+    [Pure]
     public TResult Match<TResult>(Func<TValue, TResult> ok, Func<Exception, TResult> error) =>
         IsOk
             ? ok(value)
             : error(this.error);
 
-    public Result<TValue> Where(Func<TValue, bool> f, [CallerArgumentExpression(nameof(f))] string expr = "") =>
-        IsOk && !f(value)
+    [Pure]
+    public Result<TValue> Where(Func<TValue, bool> predicate, [CallerArgumentExpression(nameof(predicate))] string expr = "") =>
+        IsOk && !predicate(value)
             ? error(expr)
             : this;
 
-    public Result<TValue> Where(Func<TValue, (bool, string)> f)
+    [Pure]
+    public Result<TValue> Where(Func<TValue, (bool, string)> predicate)
     {
         if (IsOk is false)
         {
             return this;
         }
 
-        var (pred, err) = f(value);
+        var (pred, err) = predicate(value);
         if (pred)
         {
             return this;
@@ -71,14 +75,15 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>
         return error(err);
     }
 
-    public Result<TValue> Where(Func<TValue, (bool, Exception)> f)
+    [Pure]
+    public Result<TValue> Where(Func<TValue, (bool, Exception)> predicate)
     {
         if (IsOk is false)
         {
             return this;
         }
 
-        var (pred, err) = f(value);
+        var (pred, err) = predicate(value);
         if (pred)
         {
             return this;
@@ -91,36 +96,39 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>
     /// Transforms the value of the result using a specified function if the result is successful.
     /// </summary>
     /// <typeparam name="TResult">The type of the result after applying the transformation function.</typeparam>
-    /// <param name="f">A transformation function to apply to the value.</param>
+    /// <param name="selector">A transformation function to apply to the value.</param>
     /// <returns>A new result object with the transformed value if the original result is successful, otherwise an error result.</returns>
-    public Result<TResult> Select<TResult>(Func<TValue, TResult> f)
+    [Pure]
+    public Result<TResult> Select<TResult>(Func<TValue, TResult> selector)
         where TResult : notnull =>
         IsOk
-            ? ok(f(value))
+            ? ok(selector(value))
             : error(error);
 
     /// <summary>
     /// Transforms the value of the result using a specified function that returns a result object if the original result is successful.
     /// </summary>
     /// <typeparam name="TResult">The type of the result returned by the transformation function.</typeparam>
-    /// <param name="f">A transformation function to apply to the value that returns a result object.</param>
+    /// <param name="selector">A transformation function to apply to the value that returns a result object.</param>
     /// <returns>A new result object from the transformation function if the original result is successful, otherwise an error result.</returns>
-    public Result<TResult> Select<TResult>(Func<TValue, Result<TResult>> f)
+    [Pure]
+    public Result<TResult> Select<TResult>(Func<TValue, Result<TResult>> selector)
         where TResult : notnull =>
         IsOk
-            ? f(value)
+            ? selector(value)
             : error(error);
 
     /// <summary>
     /// Asynchronously transforms the value of the result using a specified function if the result is successful.
     /// </summary>
     /// <typeparam name="TResult">The type of the result after applying the transformation function.</typeparam>
-    /// <param name="f">An asynchronous transformation function to apply to the value.</param>
+    /// <param name="selector">An asynchronous transformation function to apply to the value.</param>
     /// <returns>A task representing the asynchronous operation, containing a new result object with the transformed value if the original result is successful, otherwise an error result.</returns>
-    public async Task<Result<TResult>> Select<TResult>(Func<TValue, Task<TResult>> f)
+    [Pure]
+    public async Task<Result<TResult>> Select<TResult>(Func<TValue, Task<TResult>> selector)
         where TResult : notnull =>
         IsOk
-            ? ok(await f(value))
+            ? ok(await selector(value))
             : error(error);
 
     /// <summary>
@@ -131,6 +139,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>
     /// <param name="selector">A function to transform the original value to an intermediate result.</param>
     /// <param name="resultSelector">A function to transform the intermediate result to the final result.</param>
     /// <returns>A new result object representing the transformed value.</returns>
+    [Pure]
     public Result<TResult> SelectMany<TValue2, TResult>(Func<TValue, Result<TValue2>> selector, Func<TValue, TValue2, TResult> resultSelector)
         where TResult : notnull
         where TValue2 : notnull
@@ -158,6 +167,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>
     /// <param name="selector">A function to transform the original value to an intermediate result.</param>
     /// <param name="resultSelector">A function to transform the intermediate result to a final result object.</param>
     /// <returns>A new result object representing the final transformed value.</returns>
+    [Pure]
     public Result<TResult> SelectMany<TValue2, TResult>(Func<TValue, Result<TValue2>> selector, Func<TValue, TValue2, Result<TResult>> resultSelector)
         where TResult : notnull
         where TValue2 : notnull
@@ -180,37 +190,41 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>
     /// <summary>
     /// Returns the value if the result is successful, or applies a specified function to the error if it's not.
     /// </summary>
-    /// <param name="f">A function to apply to the error when the result is not successful.</param>
+    /// <param name="selector">A function to apply to the error when the result is not successful.</param>
     /// <returns>The original value if the result is successful; otherwise, the result of the function applied to the error.</returns>
-    public TValue IfError(Func<Exception, TValue> f) =>
+    [Pure]
+    public TValue IfError(Func<Exception, TValue> selector) =>
         IsOk
             ? value
-            : f(error);
+            : selector(error);
 
     /// <summary>
     /// Returns the original result if it is successful, or applies a specified function to the error if it's not, returning a new result object.
     /// </summary>
-    /// <param name="f">A function to apply to the error when the result is not successful, returning a new result object.</param>
+    /// <param name="selector">A function to apply to the error when the result is not successful, returning a new result object.</param>
     /// <returns>The original result if it is successful; otherwise, the new result object.</returns>
-    public Result<TValue> SelectError(Func<Exception, Result<TValue>> f) =>
+    [Pure]
+    public Result<TValue> SelectError(Func<Exception, Result<TValue>> selector) =>
         IsOk
             ? this
-            : f(error);
+            : selector(error);
 
     /// <summary>
     /// Transforms the error of the result using a specified function if the result is not successful.
     /// </summary>
-    /// <param name="f">A transformation function to apply to the error.</param>
+    /// <param name="selector">A transformation function to apply to the error.</param>
     /// <returns>A new result object with the transformed error if the original result is not successful, otherwise the original result.</returns>
-    public Result<TValue> SelectError(Func<Exception, Exception> f) =>
+    [Pure]
+    public Result<TValue> SelectError(Func<Exception, Exception> selector) =>
         IsOk
             ? this
-            : error(f(error));
+            : error(selector(error));
 
     /// <summary>
     /// Returns a string representation of the result, showing a successful value or the error message.
     /// </summary>
     /// <returns>A string representation of the result.</returns>
+    [Pure]
     public override string ToString() =>
         IsOk
             ? $"Ok({value})"
@@ -222,6 +236,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>
     /// <typeparam name="TValue">The type of the value to be included in the result.</typeparam>
     /// <param name="value">The value to include in the result.</param>
     /// <returns>A successful result object containing the provided value.</returns>
+    [Pure]
     public static Result<TValue> OkResult(TValue value) => new(value);
 
     /// <summary>
@@ -229,6 +244,7 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>
     /// </summary>
     /// <param name="exception">The exception to include in the error result.</param>
     /// <returns>An error result object containing the provided exception.</returns>
+    [Pure]
     public static Result<TValue> ErrorResult(Exception exception) => new(exception);
 
     /// <summary>
@@ -252,12 +268,15 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>
     /// <returns>A Result object representing the error.</returns>
     public static implicit operator Result<TValue>(ResultUnion<TValue>.Error result) => ErrorResult(result.Exception);
 
+    [Pure]
     public bool Equals(Result<TValue> other) =>
         this == other;
 
+    [Pure]
     public override bool Equals(object? obj) =>
         obj is Result<TValue> other && Equals(other);
 
+    [Pure]
     public override int GetHashCode() =>
         IsOk
             ? EqualityComparer<TValue>.Default.GetHashCode(value)
@@ -291,36 +310,52 @@ public readonly struct Result<TValue> : IEquatable<Result<TValue>>
 
 public readonly record struct ErrorResult(Exception Exception)
 {
+    [Pure]
     public Result<TValue> ToResult<TValue>()
         where TValue : notnull => this;
 }
 
 public static partial class Prelude
 {
+    [Pure]
     public static Result<Unit> ok() => Result<Unit>.OkResult(unit);
-    
+
+    [Pure]
     public static Result<TValue> ok<TValue>(TValue value)
         where TValue : notnull =>
         Result<TValue>.OkResult(value);
 
+    [Pure]
     public static Result<(TValue1, TValue2)> ok<TValue1, TValue2>(TValue1 value1, TValue2 value2) =>
         Result<(TValue1, TValue2)>.OkResult((value1, value2));
 
+    [Pure]
     public static ErrorResult error(Exception exception) =>
         new(exception);
 
+    [Pure]
     public static ErrorResult error(string message) =>
         new(new(message));
 
+    [Pure]
     public static Result<TValue> error<TValue>(string message)
         where TValue : notnull =>
         Result<TValue>.ErrorResult(new(message));
 
+    [Pure]
     public static Result<TValue> error<TValue>(Exception exception)
         where TValue : notnull =>
         Result<TValue>.ErrorResult(exception);
 
+    [Pure]
     public static IEnumerable<TValue> filter<TValue>(IEnumerable<Result<TValue>> values)
+        where TValue : notnull =>
+        from value in values
+        where value.IsOk
+        select value.value;
+
+    [Pure]
+    public static IEnumerable<TValue> Filter<TValue>(this IEnumerable<Result<TValue>> values)
         where TValue : notnull =>
         from value in values
         where value.IsOk

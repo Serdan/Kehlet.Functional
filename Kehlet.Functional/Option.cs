@@ -1,6 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming
 
 using System.Collections.Immutable;
+using System.Diagnostics.Contracts;
 
 namespace Kehlet.Functional;
 
@@ -10,30 +11,36 @@ public readonly struct Option<TValue>(TValue value) : IEquatable<Option<TValue>>
     internal readonly TValue value = value;
 
     public bool IsSome { get; } = true;
+
     public bool IsNone => !IsSome;
 
+    [Pure]
     public TResult Match<TResult>(Func<TValue, TResult> some, Func<TResult> none) =>
         IsSome
             ? some(value)
             : none();
 
+    [Pure]
     public Option<TValue> Where(Func<TValue, bool> predicate) =>
         IsSome && predicate(value)
             ? this
             : none;
 
+    [Pure]
     public Option<TResult> Select<TResult>(Func<TValue, TResult> selector)
         where TResult : notnull =>
         IsSome
             ? some(selector(value))
             : none;
 
+    [Pure]
     public Option<TResult> Select<TResult>(Func<TValue, Option<TResult>> selector)
         where TResult : notnull =>
         IsSome
             ? selector(value)
             : none;
 
+    [Pure]
     public Option<TResult> SelectMany<TValue2, TResult>(Func<TValue, Option<TValue2>> selector, Func<TValue, TValue2, TResult> resultSelector)
         where TResult : notnull
         where TValue2 : notnull
@@ -53,6 +60,7 @@ public readonly struct Option<TValue>(TValue value) : IEquatable<Option<TValue>>
         return some(resultSelector(value, inner.value));
     }
 
+    [Pure]
     public Option<TResult> SelectMany<TValue2, TResult>(Func<TValue, Option<TValue2>> selector, Func<TValue, TValue2, Option<TResult>> resultSelector)
         where TResult : notnull
         where TValue2 : notnull
@@ -72,11 +80,13 @@ public readonly struct Option<TValue>(TValue value) : IEquatable<Option<TValue>>
         return resultSelector(value, inner.value);
     }
 
+    [Pure]
     public Result<TValue> ToResult(string error) =>
         IsSome
             ? ok(value)
             : Prelude.error(error);
 
+    [Pure]
     public override string ToString() =>
         IsSome
             ? $"Some({value})"
@@ -88,12 +98,15 @@ public readonly struct Option<TValue>(TValue value) : IEquatable<Option<TValue>>
 
     public static implicit operator Option<TValue>(OptionUnion<TValue>.None _) => default;
 
+    [Pure]
     public bool Equals(Option<TValue> other) =>
         this == other;
 
+    [Pure]
     public override bool Equals(object? obj) =>
         obj is Option<TValue> other && this == other;
 
+    [Pure]
     public override int GetHashCode() =>
         IsSome
             ? EqualityComparer<TValue>.Default.GetHashCode(value)
@@ -130,23 +143,34 @@ public readonly struct Option<TValue>(TValue value) : IEquatable<Option<TValue>>
 
 public readonly record struct NoneOption
 {
+    [Pure]
     public Option<TValue> ToOption<TValue>()
         where TValue : notnull => none;
 }
 
 public static partial class Prelude
 {
+    [Pure]
     public static Option<TValue> some<TValue>(TValue value)
         where TValue : notnull =>
         new(value);
 
+    [Pure]
     public static Option<(TValue1, TValue2)> some<TValue1, TValue2>(TValue1 value1, TValue2 value2) =>
         new((value1, value2));
 
     public static NoneOption none =>
         default;
 
+    [Pure]
     public static IEnumerable<TValue> filter<TValue>(IEnumerable<Option<TValue>> values)
+        where TValue : notnull =>
+        from value in values
+        where value.IsSome
+        select value.value;
+
+    [Pure]
+    public static IEnumerable<TValue> Filter<TValue>(this IEnumerable<Option<TValue>> values)
         where TValue : notnull =>
         from value in values
         where value.IsSome
