@@ -1,9 +1,11 @@
 ﻿// ReSharper disable InconsistentNaming
 
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 
 namespace Kehlet.Functional;
 
+[SuppressMessage("Style", "IDE1006:Naming Styles")]
 public static partial class Prelude
 {
     public static Unit unit { get; } = new();

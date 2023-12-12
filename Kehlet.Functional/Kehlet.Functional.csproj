@@ -12,14 +12,45 @@
         <RepositoryUrl>https://github.com/Serdan/Kehlet.Functional</RepositoryUrl>
         <Version>1.0.6</Version>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
+        <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="ExhaustiveMatching.Analyzer" Version="0.5.0" />
       <PackageReference Include="Kehlet.Functional.Generators.UnionGenerator" Version="1.0.0" />
+      <PackageReference Include="SvSoft.Analyzers.ClosedTypeHierarchyDiagnosticSuppression" Version="1.1.1" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup>
         <None Include="..\readme.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Option.Enumerator.cs">
+        <DependentUpon>Option.cs</DependentUpon>
+      </Compile>
+      <Compile Update="NoneOption.cs">
+        <DependentUpon>Option.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Option.Prelude.cs">
+        <DependentUpon>Option.cs</DependentUpon>
+      </Compile>
+      <Compile Update="OptionUnion.cs">
+        <DependentUpon>Option.cs</DependentUpon>
+      </Compile>
+      <Compile Update="ErrorResult.cs">
+        <DependentUpon>Result.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Result.Prelude.cs">
+        <DependentUpon>Result.cs</DependentUpon>
+      </Compile>
+      <Compile Update="ResultUnion.cs">
+        <DependentUpon>Result.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Result.Enumerator.cs">
+        <DependentUpon>Result.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 </Project>

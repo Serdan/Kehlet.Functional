@@ -87,16 +87,8 @@ public readonly struct Unit :
             : throw new FormatException();
 
     [Pure]
-    public static bool TryParse(string? s, IFormatProvider? provider, out Unit result)
-    {
-        if (string.Equals(s, "()"))
-        {
-            result = default;
-            return true;
-        }
-
-        return false;
-    }
+    public static bool TryParse(string? s, IFormatProvider? provider, out Unit result) =>
+        string.Equals(s, "()");
 
     public static bool operator ==(Unit lhs, Unit rhs) => true;
 
@@ -105,9 +97,4 @@ public readonly struct Unit :
     public static implicit operator ValueTuple(Unit _) => default;
 
     public static implicit operator Unit(ValueTuple _) => default;
-}
-
-[JsonSerializable(typeof(Unit))]
-internal partial class UnitJsonSerializerContext : JsonSerializerContext
-{
 }
