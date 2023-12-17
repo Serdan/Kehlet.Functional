@@ -54,3 +54,11 @@ public partial record OptionUnion<TValue>
             _ => throw new UnreachableException()
         };
 }
+
+public static partial class Prelude
+{
+    public static OptionUnion<TResult> apply<TSource, TResult>(OptionUnion<Func<TSource, TResult>> selectorOption, OptionUnion<TSource> valueOption) =>
+        from selector in selectorOption
+        from value in valueOption
+        select selector(value);
+}
