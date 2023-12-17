@@ -99,4 +99,32 @@ public static partial class Prelude
     [Pure]
     public static Fold<TAccumulate> fold<TAccumulate>(TAccumulate initialValue) =>
         new(initialValue);
+
+    [Pure]
+    public static Func<T1, Func<T2, T3>> curry<T1, T2, T3>(Func<T1, T2, T3> f) =>
+        t1 => t2 => f(t1, t2);
+
+    [Pure]
+    public static Func<T1, Func<T2, Func<T3, T4>>> curry<T1, T2, T3, T4>(Func<T1, T2, T3, T4> f) =>
+        t1 => t2 => t3 => f(t1, t2, t3);
+
+    [Pure]
+    public static Func<T1, Func<T2, Func<T3, Func<T4, T5>>>> curry<T1, T2, T3, T4, T5>(Func<T1, T2, T3, T4, T5> f) =>
+        t1 => t2 => t3 => t4 => f(t1, t2, t3, t4);
+
+    [Pure]
+    public static Func<T1, Func<T2, Func<T3, Func<T4, Func<T5, T6>>>>> curry<T1, T2, T3, T4, T5, T6>(Func<T1, T2, T3, T4, T5, T6> f) =>
+        t1 => t2 => t3 => t4 => t5 => f(t1, t2, t3, t4, t5);
+
+    [Pure]
+    public static Func<T1, Func<T2, T3, T4>> curry2<T1, T2, T3, T4>(Func<T1, T2, T3, T4> selector) =>
+        t1 => (t2, t3) => selector(t1, t2, t3);
+
+    [Pure]
+    public static Func<T1, Func<T2, T3, T4, T5>> curry2<T1, T2, T3, T4, T5>(Func<T1, T2, T3, T4, T5> selector) =>
+        t1 => (t2, t3, t4) => selector(t1, t2, t3, t4);
+
+    [Pure]
+    public static Func<T1, Func<T2, T3, T4, T5, T6>> curry2<T1, T2, T3, T4, T5, T6>(Func<T1, T2, T3, T4, T5, T6> selector) =>
+        t1 => (t2, t3, t4, t5) => selector(t1, t2, t3, t4, t5);
 }
