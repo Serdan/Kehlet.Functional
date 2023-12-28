@@ -4,4 +4,7 @@ namespace Kehlet.Functional;
 public class ComputationBuilderTypeAttribute : Attribute;
 
 [AttributeUsage(AttributeTargets.Method)]
-public class ComputationBuilderTargetTypeAttribute(Type type) : Attribute;
+public class ComputationBuilderTargetTypeAttribute(Type type) : Attribute
+{
+    public Type Type { get; } = type;
+}
