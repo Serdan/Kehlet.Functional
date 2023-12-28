@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="KEHFUN0001Description" xml:space="preserve">
+        <value>Builder type is used in wrong context.</value><comment>An optional longer localizable description of the diagnostic.</comment>
+    </data>
+    <data name="KEHFUN0001MessageFormat" xml:space="preserve">
+        <value>Builder types like '{0}' must only be used in supporting Select() implementations</value><comment>The format-able message the diagnostic displays.</comment>
+    </data>
+    <data name="KEHFUN0001Title" xml:space="preserve">
+        <value>Builder type is used in wrong context</value><comment>The title of the diagnostic.</comment>
+    </data>
+</root>

@@ -1,0 +1,9 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "DebugRoslynAnalyzers": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "../Kehlet.Functional.Analyzers.Sample/Kehlet.Functional.Analyzers.Sample.csproj"
+    }
+  }
+}
