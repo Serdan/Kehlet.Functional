@@ -37,9 +37,38 @@ public Result<string> WriteFile(string projectName, string filePath, string cont
     };
 ```
 
-### Other stuff
+### LinqPlus
 ```csharp
 int factorial = from acc in fold(1)
                 from value in (int[]) [1, 2, 3, 4, 5]
                 select acc * value
+```
+
+```csharp
+Option<int> first = from n in (int[]) [1, 2, 3, 4]
+                    select first(n > 2);
+```
+
+
+```csharp
+Option<int> last = from n in (int[]) [1, 2, 3, 4]
+                   select last();
+```
+
+```csharp
+IEnumerable<int> take3 = from n in (int[]) [1, 2, 3, 4]
+                         select take(3);
+```
+
+```csharp
+IEnumerable<int> take = from n in (int[]) [1, 2, 3, 4]
+                        select takeWhile(n < 3);
+```
+
+```csharp
+Option<(string, float)> last = from student in students
+                               from grade in student.Grades
+                               select (student.Name, grade) into studentGrades
+                               select reverse() into reversed
+                               select first();
 ```
