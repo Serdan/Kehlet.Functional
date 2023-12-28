@@ -10,6 +10,24 @@ public static partial class Prelude
         where TValue : notnull =>
         new(effect);
 
+    public static AsyncEffect<TRuntime, IEnumerable<TValue>> filter<TRuntime, TValue>(IEnumerable<AsyncEffect<TRuntime, TValue>> enumerable)
+        where TValue : notnull
+    {
+        return new(async runtime => ok((IEnumerable<TValue>) await Core(runtime).ToListAsync()));
+
+        async IAsyncEnumerable<TValue> Core(TRuntime runtime)
+        {
+            foreach (var item in enumerable)
+            {
+                var result = await item.Run(runtime);
+                if (result.IsOk)
+                {
+                    yield return result.value;
+                }
+            }
+        }
+    }
+
     public static AsyncEffect<TRuntime, (TValue1, TValue2)> combine<TRuntime, TValue1, TValue2>(
         AsyncEffect<TRuntime, TValue1> value1,
         AsyncEffect<TRuntime, TValue2> value2)

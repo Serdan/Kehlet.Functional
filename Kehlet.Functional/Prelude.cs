@@ -1,7 +1,6 @@
 ﻿// ReSharper disable InconsistentNaming
 
 using System.Diagnostics.CodeAnalysis;
-using Kehlet.Functional.LinqPlus;
 
 namespace Kehlet.Functional;
 
@@ -76,7 +75,7 @@ public static partial class Prelude
         tuple.value2;
 
     [Pure]
-    public static Fold<TAccumulate> fold<TAccumulate>(TAccumulate initialValue) =>
+    public static LinqPlus.Prelude.Fold<TAccumulate> fold<TAccumulate>(TAccumulate initialValue) =>
         new(initialValue);
 
     public static Func<T2, T1, T3> swap<T1, T2, T3>(Func<T1, T2, T3> f) =>
