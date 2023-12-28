@@ -1,5 +1,3 @@
-using System.Diagnostics.Contracts;
-
 namespace Kehlet.Functional;
 
 public readonly record struct ErrorResult(Exception Exception)

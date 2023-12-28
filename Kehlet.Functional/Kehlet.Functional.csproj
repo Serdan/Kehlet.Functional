@@ -12,45 +12,58 @@
         <RepositoryUrl>https://github.com/Serdan/Kehlet.Functional</RepositoryUrl>
         <Version>1.0.6</Version>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
-        <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="ExhaustiveMatching.Analyzer" Version="0.5.0" />
-      <PackageReference Include="Kehlet.Functional.Generators.UnionGenerator" Version="1.0.0" />
-      <PackageReference Include="SvSoft.Analyzers.ClosedTypeHierarchyDiagnosticSuppression" Version="1.1.1" PrivateAssets="All" />
+        <PackageReference Include="ExhaustiveMatching.Analyzer" Version="0.5.0" PrivateAssets="all"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" PrivateAssets="all"/>
+        <PackageReference Include="Kehlet.Functional.Generators.UnionGenerator" Version="1.0.0" PrivateAssets="all"/>
+        <PackageReference Include="Kehlet.Generators.AutoInterface" Version="1.0.5" PrivateAssets="all" />
+        <PackageReference Include="SvSoft.Analyzers.ClosedTypeHierarchyDiagnosticSuppression" Version="1.1.1" PrivateAssets="All"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\readme.md" Pack="true" PackagePath="\" />
+        <None Include="..\readme.md" Pack="true" PackagePath="\"/>
+        <None Update="Templates\Test.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>Test.cs</LastGenOutput>
+        </None>
+        <None Update="Prelude.Curry.tt">
+            <DependentUpon>Prelude.cs</DependentUpon>
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>Prelude.Curry.cs</LastGenOutput>
+        </None>
+        <None Update="Prelude.Compose.tt">
+            <DependentUpon>Prelude.cs</DependentUpon>
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>Prelude.Compose.cs</LastGenOutput>
+        </None>
+        <None Update="RuntimeDependencies\FileIO.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>FileIO.cs</LastGenOutput>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Option.Enumerator.cs">
-        <DependentUpon>Option.cs</DependentUpon>
-      </Compile>
-      <Compile Update="NoneOption.cs">
-        <DependentUpon>Option.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Option.Prelude.cs">
-        <DependentUpon>Option.cs</DependentUpon>
-      </Compile>
-      <Compile Update="OptionUnion.cs">
-        <DependentUpon>Option.cs</DependentUpon>
-      </Compile>
-      <Compile Update="ErrorResult.cs">
-        <DependentUpon>Result.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result.Prelude.cs">
-        <DependentUpon>Result.cs</DependentUpon>
-      </Compile>
-      <Compile Update="ResultUnion.cs">
-        <DependentUpon>Result.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Result.Enumerator.cs">
-        <DependentUpon>Result.cs</DependentUpon>
-      </Compile>
+        <Compile Update="Prelude.Curry.cs">
+            <DependentUpon>Prelude.Curry.tt</DependentUpon>
+        </Compile>
+        <Compile Update="Prelude.Curry.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>Prelude.Curry.tt</DependentUpon>
+        </Compile>
+        <Compile Update="Prelude.Compose.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>Prelude.Compose.tt</DependentUpon>
+        </Compile>
+        <Compile Update="RuntimeDependencies\FileIO.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>FileIO.tt</DependentUpon>
+        </Compile>
     </ItemGroup>
 </Project>

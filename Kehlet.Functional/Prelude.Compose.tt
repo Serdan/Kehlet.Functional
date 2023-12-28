@@ -1,0 +1,62 @@
+﻿<#@ template language="C#" #>
+<#@ import namespace="System.Linq" #>
+namespace Kehlet.Functional;
+
+static partial class Prelude
+{
+<#
+    for (var i = 0; i < 6; i++)
+    {
+        var n = i + 3;
+        WriteLine($"{Tab}[Pure]");
+        Write($"{Tab}public static Func<T1, T{n}> compose");
+        EmitTypeParams(n);
+        WriteLine("(");
+        for (var j = 1; j < n; j++)
+        {
+            Write(Tab + Tab);
+            EmitFunc(2, j);
+            Write($"f{j}");
+            if (j < n - 1)
+            {
+                WriteLine(",");
+            }
+        }
+        WriteLine(") =>");
+        Write($"{Tab}{Tab}x => ");
+        EmitCompose(n);
+        WriteLine("");
+        WriteLine("");
+    }
+#>
+}
+<#+
+    private string Tab { get; } = new(' ', 4);
+
+    private void EmitTypeParams(int n, int startAt = 1)
+    {
+        Write("<");
+        var ts = Enumerable.Range(startAt, n).Select(x => $"T{x}");
+        Write(string.Join(", ", ts));
+        Write(">");
+    }
+
+    private void EmitFunc(int n, int startAt)
+    {
+        Write("Func<");
+        var ts = Enumerable.Range(startAt, n).Select(x => $"T{x}");
+        Write(string.Join(", ", ts));
+        Write(">");
+    }
+
+    private void EmitCompose(int n)
+    {
+        for (var i = n - 1; i > 0; i--)
+        {
+            Write($"f{i}(");
+        }
+        Write("x");
+        Write(new(')', n - 1));
+        Write(";");
+    }
+#>

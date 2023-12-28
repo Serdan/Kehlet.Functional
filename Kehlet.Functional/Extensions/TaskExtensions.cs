@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace Kehlet.Functional.Extensions;
 
@@ -77,4 +76,80 @@ public static class TaskExtensions
     [Pure]
     internal static ConfiguredTaskAwaitable NoSync(this Task self) =>
         self.ConfigureAwait(false);
+
+    [Pure]
+    public static async Task<Result<TResult>> Select<TValue, TResult>(this Task<Result<TValue>> self, Func<TValue, Task<TResult>> selector)
+        where TValue : notnull
+        where TResult : notnull
+    {
+        var result = await self.NoSync();
+        if (result.IsError)
+        {
+            return error(result.error);
+        }
+
+        return ok(await selector(result.value));
+    }
+
+    [Pure]
+    public static async Task<Result<TResult>> Select<TValue, TResult>(this Task<Result<TValue>> self, Func<TValue, Task<Result<TResult>>> selector)
+        where TValue : notnull
+        where TResult : notnull
+    {
+        var result = await self.NoSync();
+        if (result.IsError)
+        {
+            return error(result.error);
+        }
+
+        return await selector(result.value).NoSync();
+    }
+
+    [Pure]
+    public static async Task<Result<TResult>> SelectMany<TValue, TTask, TResult>(
+        this Task<Result<TValue>> self,
+        Func<TValue, Task<Result<TTask>>> selector,
+        Func<TValue, TTask, TResult> resultSelector)
+        where TValue : notnull
+        where TTask : notnull
+        where TResult : notnull
+    {
+        var result = await self.NoSync();
+        if (result.IsError)
+        {
+            return error(result.error);
+        }
+
+        var result2 = await selector(result.value).NoSync();
+        if (result2.IsError)
+        {
+            return error(result2.error);
+        }
+
+        return ok(resultSelector(result.value, result2.value));
+    }
+
+    [Pure]
+    public static async Task<Result<TResult>> SelectMany<TValue, TTask, TResult>(
+        this Task<Result<TValue>> self,
+        Func<TValue, Task<Result<TTask>>> selector,
+        Func<TValue, TTask, Task<Result<TResult>>> resultSelector)
+        where TValue : notnull
+        where TTask : notnull
+        where TResult : notnull
+    {
+        var result = await self.NoSync();
+        if (result.IsError)
+        {
+            return error(result.error);
+        }
+
+        var result2 = await selector(result.value).NoSync();
+        if (result2.IsError)
+        {
+            return error(result2.error);
+        }
+
+        return await resultSelector(result.value, result2.value);
+    }
 }

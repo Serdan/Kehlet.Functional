@@ -1,8 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-
-// ReSharper disable InconsistentNaming
-
-namespace Kehlet.Functional;
+﻿namespace Kehlet.Functional;
 
 public static partial class Prelude
 {

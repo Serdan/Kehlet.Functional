@@ -1,6 +1,4 @@
-using System.Diagnostics.Contracts;
-
-namespace Kehlet.Functional;
+namespace Kehlet.Functional.LinqPlus;
 
 public readonly struct Fold<TAccumulate>(TAccumulate initialValue)
 {

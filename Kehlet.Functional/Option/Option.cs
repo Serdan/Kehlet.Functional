@@ -1,6 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Immutable;
-using System.Diagnostics.Contracts;
 
 namespace Kehlet.Functional;
 
@@ -38,6 +36,13 @@ public readonly partial struct Option<TValue>(TValue value) : IEquatable<Option<
         IsSome
             ? selector(value)
             : none;
+
+    [Pure]
+    [ComputationBuilderTargetType(typeof(OrElse<>))]
+    public Option<TValue> Select(Func<TValue, OrElse<TValue>> orElseSelector) =>
+        IsSome
+            ? this
+            : orElseSelector(default!).Option;
 
     [Pure]
     public Option<TResult> SelectMany<TValue2, TResult>(Func<TValue, Option<TValue2>> selector, Func<TValue, TValue2, TResult> resultSelector)
@@ -133,14 +138,14 @@ public readonly partial struct Option<TValue>(TValue value) : IEquatable<Option<
     public static Option<IReadOnlyList<TValue>> operator &(Option<TValue> lhs, Option<TValue> rhs)
     {
         return lhs.IsSome && rhs.IsSome
-            ? some((IReadOnlyList<TValue>) ImmutableArray.Create([lhs.value, rhs.value]))
+            ? some((IReadOnlyList<TValue>) [lhs.value, rhs.value])
             : none;
     }
 
     public static Option<IReadOnlyList<TValue>> operator &(Option<IReadOnlyList<TValue>> lhs, Option<TValue> rhs)
     {
         return lhs.IsSome && rhs.IsSome
-            ? some((IReadOnlyList<TValue>) lhs.value.Append(rhs.value).ToImmutableArray())
+            ? some((IReadOnlyList<TValue>) [.. lhs.value, rhs.value])
             : none;
     }
 
@@ -159,9 +164,4 @@ public readonly partial struct Option<TValue>(TValue value) : IEquatable<Option<
     }
 
     public static bool operator !=(Option<TValue> lhs, Option<TValue> rhs) => !(lhs == rhs);
-
-    public static Option<TValue> Parse(string s, IFormatProvider? provider)
-    {
-        throw new NotImplementedException();
-    }
 }

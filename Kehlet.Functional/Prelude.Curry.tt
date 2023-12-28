@@ -1,0 +1,99 @@
+﻿<#@ template language="C#" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System.Linq" #>
+namespace Kehlet.Functional;
+
+static partial class Prelude
+{
+<#
+    for (var i = 0; i < 6; i++)
+    {
+        var n = i + 3;
+        EmitCurry(n);
+        WriteLine("");
+        WriteLine("");
+    }
+
+    for (var i = 0; i < 5; i++)
+    {
+        var n = i + 4;
+        EmitCurry2(n);
+        WriteLine("");
+        WriteLine("");
+    }
+#>
+
+}
+<#+
+    private string Tab { get; } = new(' ', 4);
+
+    private void EmitCurry(int n)
+    {
+        WriteLine($"{Tab}[Pure]");
+        Write($"{Tab}public static ");
+        EmitFunc(n);
+        Write(" curry");
+        EmitTypeParams(n);
+        Write("(Func");
+        EmitTypeParams(n);
+        WriteLine(" f) =>");
+        Write(Tab + Tab);
+        EmitLambda(n);
+    }
+
+    private void EmitCurry2(int n)
+    {
+        WriteLine($"{Tab}[Pure]");
+        Write($"{Tab}public static Func<T1, Func");
+        EmitTypeParams(n - 1, 2);
+        Write("> curry2");
+        EmitTypeParams(n);
+        Write("(Func");
+        EmitTypeParams(n);
+        WriteLine(" f) =>");
+        Write(Tab + Tab);
+        EmitLambda2(n);
+    }
+
+    private void EmitFunc(int n)
+    {
+        for (var i = 1; i < n; i++)
+        {
+            Write($"Func<T{i}, ");
+        }
+        Write($"T{n}");
+        Write(new('>', n - 1));
+    }
+
+    private void EmitTypeParams(int n, int startAt = 1)
+    {
+        Write("<");
+        var ts = Enumerable.Range(startAt, n).Select(x => $"T{x}");
+        Write(string.Join(", ", ts));
+        Write(">");
+    }
+
+    private void EmitLambda(int n)
+    {
+        for (var i = 1; i < n; i++)
+        {
+            Write($"t{i} => ");
+        }
+        Write("f(");
+        var ts = Enumerable.Range(1, n - 1).Select(x => $"t{x}");
+        Write(string.Join(", ", ts));
+        Write(");");
+    }
+
+    private void EmitLambda2(int n)
+    {
+        Write("t1 => (");
+        var ts = Enumerable.Range(2, n - 2).Select(x => $"t{x}");
+        Write(string.Join(", ", ts));
+        Write(") => ");
+        Write("f(");
+        ts = Enumerable.Range(1, n - 1).Select(x => $"t{x}");
+        Write(string.Join(", ", ts));
+        Write(");");
+    }
+#>
