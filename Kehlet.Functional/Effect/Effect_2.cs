@@ -19,7 +19,7 @@ public readonly struct Effect<TRuntime, TValue>(Func<TRuntime, Result<TValue>> e
         return new(runtime => from value in self.Run(runtime)
                               select selector(value).Run());
     }
-    
+
     public Effect<TRuntime, TResult> Select<TResult>(Func<TValue, Effect<TRuntime, TResult>> selector)
         where TResult : notnull
     {
@@ -41,7 +41,7 @@ public readonly struct Effect<TRuntime, TValue>(Func<TRuntime, Result<TValue>> e
                               from value2 in selector(value).Run(runtime)
                               select resultSelector(value, value2));
     }
-    
+
     public Effect<TRuntime, TResult> SelectMany<TValue2, TResult>(Func<TValue, Effect<TRuntime, TValue2>> selector, Func<TValue, TValue2, Effect<TRuntime, TResult>> resultSelector)
         where TValue2 : notnull
         where TResult : notnull
@@ -69,4 +69,10 @@ public readonly struct Effect<TRuntime, TValue>(Func<TRuntime, Result<TValue>> e
         var self = this;
         return asyncEffect<TRuntime, TValue>(runtime => Task.FromResult(self.Run(runtime)));
     }
+
+    public static implicit operator Effect<TRuntime, TValue>(Func<TRuntime, Result<TValue>> f) =>
+        new(f);
+
+    public static implicit operator Effect<TRuntime, TValue>(Func<TRuntime, Effect<TValue>> f) =>
+        new(runtime => f(runtime).Run());
 }

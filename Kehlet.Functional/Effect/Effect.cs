@@ -61,10 +61,16 @@ public readonly struct Effect<TValue>(Func<Result<TValue>> effect)
         var self = this;
         return asyncEffect(() => Task.FromResult(self.Run()));
     }
-    
+
     public Effect<TRuntime, TValue> WithRuntime<TRuntime>()
     {
         var self = this;
         return effect<TRuntime, TValue>(_ => self.Run());
     }
+
+    public static implicit operator Effect<TValue>(Func<Result<TValue>> f) =>
+        new(f);
+
+    public static implicit operator Effect<TValue>(Func<Effect<TValue>> f) =>
+        new(() => f().Run());
 }
