@@ -73,6 +73,6 @@ public readonly struct AsyncEffect<TRuntime, TValue>(Func<TRuntime, Task<Result<
     public static implicit operator AsyncEffect<TRuntime, TValue>(Func<TRuntime, Task<Result<TValue>>> f) =>
         new(f);
 
-    public static implicit operator AsyncEffect<TRuntime, TValue>(Func<TRuntime, Task<Effect<TValue>>> f) =>
-        new(runtime => f(runtime).Select(x => x.Run()));
+    public static implicit operator AsyncEffect<TRuntime, TValue>(Func<TRuntime, Task<Effect<TRuntime, TValue>>> f) =>
+        new(runtime => f(runtime).Select(x => x.Run(runtime)));
 }
