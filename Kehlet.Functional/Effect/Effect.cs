@@ -59,7 +59,7 @@ public readonly struct Effect<TValue>(Func<Result<TValue>> effect)
     public AsyncEffect<TValue> ToAsync()
     {
         var self = this;
-        return Prelude.effect(() => Task.FromResult(self.Run()));
+        return asyncEffect(() => Task.FromResult(self.Run()));
     }
     
     public Effect<TRuntime, TValue> WithRuntime<TRuntime>()

@@ -1,14 +1,26 @@
-﻿namespace Kehlet.Functional;
+﻿using Kehlet.Functional.Extensions;
+
+namespace Kehlet.Functional;
 
 public static partial class Prelude
 {
-    public static AsyncEffect<TValue> effect<TValue>(Func<Task<Result<TValue>>> effect)
+    public static AsyncEffect<TValue> asyncEffect<TValue>(Func<Task<Result<TValue>>> f)
         where TValue : notnull =>
-        new(effect);
+        new(f);
 
-    public static AsyncEffect<TRuntime, TValue> effect<TRuntime, TValue>(Func<TRuntime, Task<Result<TValue>>> effect)
+    public static AsyncEffect<TRuntime, TValue> asyncEffect<TRuntime, TValue>(Func<TRuntime, Task<Result<TValue>>> f)
         where TValue : notnull =>
-        new(effect);
+        new(f);
+
+    public static AsyncEffect<TRuntime, TValue> asyncEffect<TRuntime, TValue>(Func<TRuntime, Task<Effect<TValue>>> f)
+        where TValue : notnull =>
+        new(runtime => from effect in f(runtime)
+                       select effect.Run());
+
+    public static AsyncEffect<TRuntime, TValue> asyncEffect<TRuntime, TValue>(Func<TRuntime, Task<Effect<TRuntime, TValue>>> f)
+        where TValue : notnull =>
+        new(runtime => from effect in f(runtime)
+                       select effect.Run(runtime));
 
     public static AsyncEffect<TValue> okAsyncEffect<TValue>(TValue value)
         where TValue : notnull =>

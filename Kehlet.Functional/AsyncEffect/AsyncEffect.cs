@@ -57,6 +57,6 @@ public readonly struct AsyncEffect<TValue>(Func<Task<Result<TValue>>> effect)
     public AsyncEffect<TRuntime, TValue> WithRuntime<TRuntime>()
     {
         var self = this;
-        return effect<TRuntime, TValue>(_ => self.Run());
+        return asyncEffect<TRuntime, TValue>(_ => self.Run());
     }
 }

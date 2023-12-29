@@ -2,13 +2,21 @@
 
 public static partial class Prelude
 {
-    public static Effect<TValue> effect<TValue>(Func<Result<TValue>> effect)
+    public static Effect<TValue> effect<TValue>(Func<Result<TValue>> f)
         where TValue : notnull =>
-        new(effect);
+        new(f);
 
-    public static Effect<TRuntime, TValue> effect<TRuntime, TValue>(Func<TRuntime, Result<TValue>> effect)
+    public static Effect<TRuntime, TValue> effect<TRuntime, TValue>(Func<TRuntime, Result<TValue>> f)
         where TValue : notnull =>
-        new(effect);
+        new(f);
+
+    public static Effect<TRuntime, TValue> effect<TRuntime, TValue>(Func<TRuntime, Effect<TValue>> f)
+        where TValue : notnull =>
+        new(runtime => f(runtime).Run());
+
+    public static Effect<TRuntime, TValue> effect<TRuntime, TValue>(Func<TRuntime, Effect<TRuntime, TValue>> f)
+        where TValue : notnull =>
+        new(runtime => f(runtime).Run(runtime));
 
     public static Effect<TValue> okEffect<TValue>(TValue value)
         where TValue : notnull =>

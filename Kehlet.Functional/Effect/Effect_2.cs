@@ -67,6 +67,6 @@ public readonly struct Effect<TRuntime, TValue>(Func<TRuntime, Result<TValue>> e
     public AsyncEffect<TRuntime, TValue> ToAsync()
     {
         var self = this;
-        return effect<TRuntime, TValue>(runtime => Task.FromResult(self.Run(runtime)));
+        return asyncEffect<TRuntime, TValue>(runtime => Task.FromResult(self.Run(runtime)));
     }
 }
