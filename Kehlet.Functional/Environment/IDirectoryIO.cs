@@ -12,5 +12,5 @@ public readonly struct DirectoryIO : IDirectoryIO;
 public interface IHasDirectory<TRuntime>
     where TRuntime : struct, IHasDirectory<TRuntime>
 {
-    Effect<TRuntime, IFileIO> Directory { get; }
+    Effect<TRuntime, IDirectoryIO> Directory { get; }
 }
