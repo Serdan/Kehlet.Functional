@@ -2,6 +2,7 @@
 
 namespace Kehlet.Functional;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public readonly partial struct Option<TValue>(TValue value) : IEquatable<Option<TValue>>, IEnumerable<TValue>
     where TValue : notnull
 {

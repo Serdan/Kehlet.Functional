@@ -1,5 +1,6 @@
 ﻿namespace Kehlet.Functional;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public readonly struct Effect<TRuntime, TValue>(Func<TRuntime, Result<TValue>> effect)
     where TValue : notnull
 {

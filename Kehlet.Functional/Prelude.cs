@@ -5,9 +5,10 @@ using System.Diagnostics.CodeAnalysis;
 namespace Kehlet.Functional;
 
 [SuppressMessage("Style", "IDE1006:Naming Styles")]
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public static partial class Prelude
 {
-    public static Unit unit { get; } = new();
+    public static Unit unit { get; }
 
     [Pure]
     public static ResultUnion<TValue> union<TValue>(Result<TValue> result)

@@ -2,6 +2,7 @@
 
 namespace Kehlet.Functional.Extensions;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public static class TaskExtensions
 {
     [Pure]

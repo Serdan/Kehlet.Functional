@@ -20,7 +20,7 @@
         <PackageReference Include="ExhaustiveMatching.Analyzer" Version="0.5.0" PrivateAssets="all"/>
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" PrivateAssets="all"/>
         <PackageReference Include="Kehlet.Functional.Generators.UnionGenerator" Version="1.0.0" PrivateAssets="all"/>
-        <PackageReference Include="Kehlet.Generators.AutoInterface" Version="1.0.5" PrivateAssets="all" />
+        <PackageReference Include="Kehlet.Generators.AutoInterface" Version="1.0.7" PrivateAssets="all" />
         <PackageReference Include="SvSoft.Analyzers.ClosedTypeHierarchyDiagnosticSuppression" Version="1.1.1" PrivateAssets="All"/>
         <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     </ItemGroup>

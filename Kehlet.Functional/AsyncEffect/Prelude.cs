@@ -10,6 +10,40 @@ public static partial class Prelude
         where TValue : notnull =>
         new(effect);
 
+    public static AsyncEffect<TValue> okAsyncEffect<TValue>(TValue value)
+        where TValue : notnull =>
+        new(() => Task.FromResult(ok(value)));
+
+    public static AsyncEffect<TRuntime, TValue> okAsyncEffect<TRuntime, TValue>(TValue value)
+        where TValue : notnull =>
+        new(_ => Task.FromResult(ok(value)));
+
+    public static AsyncEffect<TValue> errorAsyncEffect<TValue>(string message)
+        where TValue : notnull =>
+        new(() => Task.FromResult(error(message).ToResult<TValue>()));
+
+    public static AsyncEffect<TRuntime, TValue> errorAsyncEffect<TRuntime, TValue>(string message)
+        where TValue : notnull =>
+        new(_ => Task.FromResult(error(message).ToResult<TValue>()));
+
+    public static AsyncEffect<IEnumerable<TValue>> filter<TValue>(IEnumerable<AsyncEffect<TValue>> enumerable)
+        where TValue : notnull
+    {
+        return new(async () => ok((IEnumerable<TValue>) await Core().ToListAsync()));
+
+        async IAsyncEnumerable<TValue> Core()
+        {
+            foreach (var item in enumerable)
+            {
+                var result = await item.Run();
+                if (result.IsOk)
+                {
+                    yield return result.value;
+                }
+            }
+        }
+    }
+
     public static AsyncEffect<TRuntime, IEnumerable<TValue>> filter<TRuntime, TValue>(IEnumerable<AsyncEffect<TRuntime, TValue>> enumerable)
         where TValue : notnull
     {

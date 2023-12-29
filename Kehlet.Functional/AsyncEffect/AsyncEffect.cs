@@ -2,6 +2,7 @@
 
 namespace Kehlet.Functional;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public readonly struct AsyncEffect<TValue>(Func<Task<Result<TValue>>> effect)
     where TValue : notnull
 {

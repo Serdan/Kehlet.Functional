@@ -7,6 +7,7 @@ namespace Kehlet.Functional;
 /// Represents the outcome of a computation that can either succeed with a value or fail with an exception.
 /// </summary>
 /// <typeparam name="TValue">The type of the value returned in case of success.</typeparam>
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public readonly partial struct Result<TValue> : IEquatable<Result<TValue>>, IEnumerable<TValue>
     where TValue : notnull
 {

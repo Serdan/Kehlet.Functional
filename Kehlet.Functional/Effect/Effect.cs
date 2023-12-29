@@ -1,5 +1,6 @@
 ﻿namespace Kehlet.Functional;
 
+[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public readonly struct Effect<TValue>(Func<Result<TValue>> effect)
     where TValue : notnull
 {
