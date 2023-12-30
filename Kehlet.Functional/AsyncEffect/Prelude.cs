@@ -1,6 +1,4 @@
-﻿using Kehlet.Functional.Extensions;
-
-namespace Kehlet.Functional;
+﻿namespace Kehlet.Functional;
 
 public static partial class Prelude
 {
@@ -12,15 +10,13 @@ public static partial class Prelude
         where TValue : notnull =>
         new(f);
 
-    public static AsyncEffect<TRuntime, TValue> asyncEffect<TRuntime, TValue>(Func<TRuntime, Task<Effect<TValue>>> f)
+    public static AsyncEffect<TRuntime, TValue> asyncEffect<TRuntime, TValue>(Func<TRuntime, AsyncEffect<TValue>> e)
         where TValue : notnull =>
-        new(runtime => from effect in f(runtime)
-                       select effect.Run());
+        new(runtime => e(runtime).Run());
 
-    public static AsyncEffect<TRuntime, TValue> asyncEffect<TRuntime, TValue>(Func<TRuntime, Task<Effect<TRuntime, TValue>>> f)
+    public static AsyncEffect<TRuntime, TValue> asyncEffect<TRuntime, TValue>(Func<TRuntime, AsyncEffect<TRuntime, TValue>> e)
         where TValue : notnull =>
-        new(runtime => from effect in f(runtime)
-                       select effect.Run(runtime));
+        new(runtime => e(runtime).Run(runtime));
 
     public static AsyncEffect<TValue> okAsyncEffect<TValue>(TValue value)
         where TValue : notnull =>
