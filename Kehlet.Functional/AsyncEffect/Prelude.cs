@@ -90,4 +90,12 @@ public static partial class Prelude
         from v2 in value2
         from v3 in value3
         select (v1, v2, v3);
+
+    public static AsyncEffectTarget<TValue> asAsyncEffect<TValue>()
+        where TValue : notnull =>
+        new();
+
+    public static AsyncEffectTarget<TRuntime, TValue> asAsyncEffect<TRuntime, TValue>()
+        where TValue : notnull =>
+        new();
 }

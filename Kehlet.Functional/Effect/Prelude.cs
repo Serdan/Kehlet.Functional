@@ -87,4 +87,12 @@ public static partial class Prelude
             }
         }
     }
+
+    public static EffectTarget<TValue> asEffect<TValue>()
+        where TValue : notnull =>
+        new();
+
+    public static EffectTarget<TRuntime, TValue> asEffect<TRuntime, TValue>()
+        where TValue : notnull =>
+        new();
 }
