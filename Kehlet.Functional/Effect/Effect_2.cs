@@ -4,6 +4,13 @@
 public readonly struct Effect<TRuntime, TValue>(Func<TRuntime, Result<TValue>> effect)
     where TValue : notnull
 {
+    public Effect<TRuntime, TResult> Match<TResult>(Func<TValue, TResult> okCase, Func<Exception, TResult> errorCase)
+        where TResult : notnull
+    {
+        var self = this;
+        return new(runtime => ok(self.Run(runtime).Match(okCase, errorCase)));
+    }
+
     public Effect<TRuntime, TResult> Select<TResult>(Func<TValue, TResult> selector)
         where TResult : notnull
     {

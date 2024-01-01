@@ -4,6 +4,13 @@
 public readonly struct Effect<TValue>(Func<Result<TValue>> effect)
     where TValue : notnull
 {
+    public Effect<TResult> Match<TResult>(Func<TValue, TResult> okCase, Func<Exception, TResult> errorCase)
+        where TResult : notnull
+    {
+        var self = this;
+        return new(() => ok(self.Run().Match(okCase, errorCase)));
+    }
+
     public Effect<TResult> Select<TResult>(Func<TValue, TResult> selector)
         where TResult : notnull
     {

@@ -6,6 +6,14 @@ namespace Kehlet.Functional;
 public readonly struct AsyncEffect<TValue>(Func<Task<Result<TValue>>> effect)
     where TValue : notnull
 {
+    public AsyncEffect<TResult> Match<TResult>(Func<TValue, TResult> okCase, Func<Exception, TResult> errorCase)
+        where TResult : notnull
+    {
+        var self = this;
+        return new(() => from result in self.Run()
+                         select result.Match(okCase, errorCase).Apply(ok));
+    }
+
     public AsyncEffect<TResult> Select<TResult>(Func<TValue, Task<TResult>> selector)
         where TResult : notnull
     {
