@@ -153,4 +153,9 @@ public static class TaskExtensions
 
         return await resultSelector(result.value, result2.value);
     }
+
+    [Pure]
+    public static AsyncEffect<TValue> ToAsyncEffect<TValue>(this Task<TValue> self)
+        where TValue : notnull =>
+        new(() => self.Select(ok));
 }
