@@ -83,4 +83,13 @@ public readonly struct AsyncEffect<TRuntime, TValue>(Func<TRuntime, Task<Result<
 
     public static implicit operator AsyncEffect<TRuntime, TValue>(Func<TRuntime, Task<Effect<TRuntime, TValue>>> f) =>
         new(runtime => f(runtime).Select(x => x.Run(runtime)));
+
+    public static implicit operator AsyncEffect<TRuntime, TValue>(Effect<TValue> eff) =>
+        eff.ToAsync().WithRuntime<TRuntime>();
+
+    public static implicit operator AsyncEffect<TRuntime, TValue>(Effect<TRuntime, TValue> eff) =>
+        eff.ToAsync();
+
+    public static implicit operator AsyncEffect<TRuntime, TValue>(AsyncEffect<TValue> eff) =>
+        eff.WithRuntime<TRuntime>();
 }

@@ -82,4 +82,7 @@ public readonly struct Effect<TRuntime, TValue>(Func<TRuntime, Result<TValue>> e
 
     public static implicit operator Effect<TRuntime, TValue>(Func<TRuntime, Effect<TRuntime, TValue>> f) =>
         new(runtime => f(runtime).Run(runtime));
+
+    public static implicit operator Effect<TRuntime, TValue>(Effect<TValue> eff) =>
+        eff.WithRuntime<TRuntime>();
 }
