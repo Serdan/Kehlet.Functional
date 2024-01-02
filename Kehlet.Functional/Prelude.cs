@@ -84,4 +84,28 @@ public static partial class Prelude
 
     public static Func<T2, Func<T1, T3>> swap<T1, T2, T3>(Func<T1, Func<T2, T3>> f) =>
         t2 => t1 => f(t1)(t2);
+
+    public static Unit toUnit(Action action)
+    {
+        action();
+        return unit;
+    }
+
+    public static Unit toUnit<T>(Action<T> action, T arg)
+    {
+        action(arg);
+        return unit;
+    }
+
+    public static Unit toUnit<T1, T2>(Action<T1, T2> action, T1 arg1, T2 arg2)
+    {
+        action(arg1, arg2);
+        return unit;
+    }
+
+    public static Unit toUnit<T1, T2, T3>(Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3)
+    {
+        action(arg1, arg2, arg3);
+        return unit;
+    }
 }
