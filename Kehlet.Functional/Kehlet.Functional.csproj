@@ -10,7 +10,7 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/Serdan/Kehlet.Functional</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Serdan/Kehlet.Functional</RepositoryUrl>
-        <Version>1.0.18</Version>
+        <Version>1.0.19</Version>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <IsAotCompatible>true</IsAotCompatible>
